@@ -58,7 +58,7 @@ class AdminContentController extends Controller
 
         $path = $request->file('image')->store('uploads', 'public');
 
-        return response()->json(['url' => Storage::disk('public')->url($path)]);
+        return response()->json(['url' => url('/media/'.$path)]);
     }
 
     protected function assertValidSection(string $section): void

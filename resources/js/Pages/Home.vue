@@ -90,7 +90,14 @@ interface SiteSettings {
 interface AssistantContent {
     enabled: boolean;
     greeting: string;
-    questions: Array<{ text: string }>;
+    questions: Array<{
+        topic?: string;
+        text: string;
+        hint?: string;
+        options?: Array<{ label: string; value?: string; next?: number; interest?: boolean }>;
+        yes_next?: number;
+        no_next?: number;
+    }>;
 }
 
 const props = defineProps<{

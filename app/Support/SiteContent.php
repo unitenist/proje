@@ -40,16 +40,107 @@ class SiteContent
         return [
             'enabled' => true,
             'greeting' => 'Hoşgeldiniz! AI teknolojilerini birlikte keşfedelim 👋',
-            // Branching question tree: each question's answer (Evet/Hayır) decides the NEXT question via
-            // yes_next/no_next (0-based index into this same list). Use -1 to end the flow at that answer.
             'questions' => [
-                ['text' => 'Şu anda bir ERP veya operasyon sisteminiz var mı?', 'yes_next' => 1, 'no_next' => 2],
-                ['text' => 'Mevcut ERP sisteminizi yapay zekâ ile entegre etmek ister misiniz?', 'yes_next' => 3, 'no_next' => 5],
-                ['text' => 'Yakın zamanda yeni bir ERP veya otomasyon sistemi kurmayı düşünüyor musunuz?', 'yes_next' => 4, 'no_next' => 5],
-                ['text' => 'Öncelikli olarak stok ve tahsilat süreçlerinde otomasyon ister misiniz?', 'yes_next' => 6, 'no_next' => 6],
-                ['text' => 'Kurulum sürecinde baştan AI destekli bir mimari tercih eder misiniz?', 'yes_next' => 6, 'no_next' => 6],
-                ['text' => 'Verilerinizle doğal dilde konuşup anlık rapor almak ister misiniz?', 'yes_next' => 6, 'no_next' => 6],
-                ['text' => 'Bir AI Agent projesi için ekibimizle görüşmek ister misiniz?', 'yes_next' => -1, 'no_next' => -1],
+                [
+                    'topic' => 'Başlangıç noktası',
+                    'text' => 'Operasyonlarınızı bugün hangi teknoloji yapısı yönetiyor?',
+                    'hint' => 'Mevcut yapıyı bilmek, size sıfırdan kurulum mu yoksa hızlı entegrasyon mu önereceğimizi belirler.',
+                    'options' => [
+                        ['label' => 'ERP kullanıyoruz', 'value' => 'Aktif ERP altyapısı var', 'next' => 1],
+                        ['label' => 'Birden çok araç kullanıyoruz', 'value' => 'Excel, e-ticaret, CRM veya farklı uygulamalar birlikte kullanılıyor', 'next' => 4],
+                        ['label' => 'Henüz merkezi sistem yok', 'value' => 'Merkezi operasyon sistemi henüz yok', 'next' => 7],
+                    ],
+                ],
+                [
+                    'topic' => 'ERP olgunluğu',
+                    'text' => 'ERP veriniz karar almak için ne kadar erişilebilir durumda?',
+                    'hint' => 'İyi bir AI katmanı önce doğru, güncel ve yetkili veriye güvenle erişmelidir.',
+                    'options' => [
+                        ['label' => 'Raporlar hazır ama geç kalıyor', 'value' => 'Standart raporlar var; karar verene geç ulaşıyor', 'next' => 2],
+                        ['label' => 'Veri var ama dağınık', 'value' => 'ERP verisi farklı ekranlar ve dosyalara dağılmış', 'next' => 3],
+                        ['label' => 'Veri kalitesi belirsiz', 'value' => 'Eksik, mükerrer veya güvenilmez veri riski var', 'next' => 3],
+                    ],
+                ],
+                [
+                    'topic' => 'Hedef çıktı',
+                    'text' => 'İlk aşamada en değerli sonuç hangisi olurdu?',
+                    'hint' => 'Yönetim raporlama ile operasyon yürütme aynı çözüm değildir; başlangıcı doğru seçmek yatırımın geri dönüşünü hızlandırır.',
+                    'options' => [
+                        ['label' => 'Doğal dilde anlık rapor', 'value' => 'Yöneticiler veriye soru sorarak hızlı karar almak istiyor', 'next' => 9],
+                        ['label' => 'Risk ve fırsat uyarıları', 'value' => 'Stok, tahsilat veya satış sapmalarını önceden görmek istiyor', 'next' => 9],
+                        ['label' => 'Tekrarlayan işleri devretmek', 'value' => 'Belge, sipariş veya müşteri süreçlerini AI agent ile yürütmek istiyor', 'next' => 6],
+                    ],
+                ],
+                [
+                    'topic' => 'Veri hazırlığı',
+                    'text' => 'İlk yatırımın odağı konusunda hangi yaklaşım size daha gerçekçi geliyor?',
+                    'hint' => 'Hızlı prototip kısa sürede değer gösterir; veri standardizasyonu ise daha kapsamlı ve kalıcı otomasyonun temelidir.',
+                    'options' => [
+                        ['label' => 'Önce hızlı bir pilot', 'value' => 'Sınırlı bir süreçte ölçülebilir pilot tercih ediliyor', 'next' => 9],
+                        ['label' => 'Önce veriyi düzenleyelim', 'value' => 'Veri kalitesi ve entegrasyon temeli önce güçlendirilmeli', 'next' => 8],
+                        ['label' => 'İkisini paralel yürütelim', 'value' => 'Pilot ve veri hazırlığı birlikte planlanmalı', 'next' => 8],
+                    ],
+                ],
+                [
+                    'topic' => 'Sistemler arası akış',
+                    'text' => 'Ekipleriniz arasında en çok hangi kopukluk zaman kaybettiriyor?',
+                    'hint' => 'AI, tek bir araca eklenen sohbet kutusundan çok; sistemler arasındaki işi takip eden bir operasyon katmanı olduğunda güçlüdür.',
+                    'options' => [
+                        ['label' => 'E-ticaret - stok - sipariş', 'value' => 'Satış kanalları ile stok ve sipariş akışı eşzamanlı değil', 'next' => 5],
+                        ['label' => 'CRM - satış - teklif', 'value' => 'Müşteri ve satış verisi ekipler arasında parçalı', 'next' => 5],
+                        ['label' => 'Finans - tahsilat - yönetim', 'value' => 'Finansal takip ve yönetim görünürlüğü manuel ilerliyor', 'next' => 5],
+                    ],
+                ],
+                [
+                    'topic' => 'Öncelik karşılaştırması',
+                    'text' => 'Bu sorunu çözerken hangi kazanım daha kritik?',
+                    'hint' => 'Maliyet azaltma, hız ve kontrol farklı mimari kararlar gerektirir; çözümü önceliğe göre tasarlarız.',
+                    'options' => [
+                        ['label' => 'Daha az manuel iş', 'value' => 'Operasyonel iş yükünü azaltmak öncelikli', 'next' => 6],
+                        ['label' => 'Daha hızlı karar', 'value' => 'Canlı görünürlük ve karar hızı öncelikli', 'next' => 9],
+                        ['label' => 'Daha az hata ve daha çok kontrol', 'value' => 'Onay, izlenebilirlik ve hata azaltma öncelikli', 'next' => 8],
+                    ],
+                ],
+                [
+                    'topic' => 'AI agent kapsamı',
+                    'text' => 'Bir AI agent hangi yetki seviyesinde başlamalı?',
+                    'hint' => 'Öneri üreten asistan ile işlem yapan agent arasında güvenlik, onay ve denetim tasarımı farklıdır.',
+                    'options' => [
+                        ['label' => 'Sadece öneri ve taslak', 'value' => 'AI yalnızca analiz, öneri ve taslak üretmeli', 'next' => 8],
+                        ['label' => 'İnsan onayıyla işlem', 'value' => 'AI işlem hazırlamalı; insan onayı sonrası çalışmalı', 'next' => 8],
+                        ['label' => 'Kurallı işlemleri otomatik yapsın', 'value' => 'Net kurallı düşük riskli işlemler otomatik yürütülebilir', 'next' => 8],
+                    ],
+                ],
+                [
+                    'topic' => 'Yeni mimari',
+                    'text' => 'Yeni bir sistem kurarken önceliğiniz hangisi olurdu?',
+                    'hint' => 'Başlangıçta modüler kurgu, ileride ERP, e-ticaret ve AI agent ihtiyaçları değiştiğinde daha düşük maliyetli büyüme sağlar.',
+                    'options' => [
+                        ['label' => 'Hızlı devreye alma', 'value' => 'Kısa sürede çalışan çekirdek süreçler hedefleniyor', 'next' => 9],
+                        ['label' => 'Ölçeklenebilir altyapı', 'value' => 'Büyümeye ve yeni kanallara hazır mimari hedefleniyor', 'next' => 8],
+                        ['label' => 'Önce süreçleri netleştirme', 'value' => 'Teknoloji seçmeden önce süreç tasarımı yapılmalı', 'next' => 9],
+                    ],
+                ],
+                [
+                    'topic' => 'Güven ve yönetişim',
+                    'text' => 'AI çözümünde hangi kontrol mekanizması vazgeçilmez?',
+                    'hint' => 'Rol bazlı erişim, kaynak gösterme, onay akışı ve işlem kayıtları birlikte değerlendirildiğinde AI güvenle ölçeklenir.',
+                    'options' => [
+                        ['label' => 'Rol bazlı veri erişimi', 'value' => 'Her kullanıcının yalnızca yetkili veriyi görmesi gerekli', 'next' => 9],
+                        ['label' => 'Onay ve işlem kayıtları', 'value' => 'AI kararlarının ve işlemlerinin izlenebilir olması gerekli', 'next' => 9],
+                        ['label' => 'KVKK ve veri yerleşimi', 'value' => 'Kişisel veri, saklama ve model kullanım sınırları öncelikli', 'next' => 9],
+                    ],
+                ],
+                [
+                    'topic' => 'Önerilen sonraki adım',
+                    'text' => 'Yanıtlarınıza göre en doğru başlangıç, hedef süreç için kısa bir keşif ve karşılaştırmalı çözüm taslağı hazırlamak. Görüşme planlayalım mı?',
+                    'hint' => 'Görüşmede mevcut akışı, entegrasyon seçeneklerini, beklenen faydayı ve ilk pilot kapsamını birlikte netleştiririz.',
+                    'options' => [
+                        ['label' => 'Evet, görüşelim', 'value' => 'Keşif görüşmesi talep ediyor', 'next' => -1, 'interest' => true],
+                        ['label' => 'Önce bir çözüm özeti gönderin', 'value' => 'Karşılaştırmalı çözüm özeti talep ediyor', 'next' => -1, 'interest' => true],
+                        ['label' => 'Şimdilik araştırıyorum', 'value' => 'Henüz değerlendirme aşamasında', 'next' => -1],
+                    ],
+                ],
             ],
         ];
     }

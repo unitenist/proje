@@ -6,6 +6,7 @@ use App\Http\Controllers\AdminMessagesController;
 use App\Http\Controllers\ContactMessageController;
 use App\Http\Middleware\EnsureAdmin;
 use App\Support\SiteContent;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -24,6 +25,14 @@ Route::get('/', fn () => Inertia::render('Home', [
 
 Route::post('/iletisim', [ContactMessageController::class, 'store'])->name('contact.store');
 Route::post('/robot-lead', [ContactMessageController::class, 'storeRobotLead'])->name('robot-lead.store');
+
+// Shared hosting providers may disable symlink() and exec(), preventing
+// `storage:link`. Apache forwards this missing public path to Laravel.
+Route::get('/media/{path}', function (string $path) {
+    abort_if(str_contains($path, '..') || ! Storage::disk('public')->exists($path), 404);
+
+    return Storage::disk('public')->response($path);
+})->where('path', '.*')->name('media.show');
 
 // Legacy multi-page URLs now redirect to the matching anchor on the single-page site.
 Route::redirect('/hizmetler', '/#services');

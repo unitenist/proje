@@ -4,6 +4,7 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
+        "build:production": "rm -f public/hot public/fonts-manifest.dev.json && vite build",
         "dev": "vite"
     },
     "devDependencies": {
