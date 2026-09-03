@@ -296,54 +296,84 @@ class SiteContent
         };
     }
 
+    /**
+     * Local development uploads may have been saved with localhost in their URL.
+     * Serve these through the current site's media route instead.
+     */
+    protected static function stored(string $section): array
+    {
+        return self::normalizeLocalMediaUrls(Setting::get(self::settingKey($section), []));
+    }
+
+    protected static function normalizeLocalMediaUrls(mixed $value): mixed
+    {
+        if (is_array($value)) {
+            return array_map(fn (mixed $item) => self::normalizeLocalMediaUrls($item), $value);
+        }
+
+        if (! is_string($value)) {
+            return $value;
+        }
+
+        $url = parse_url($value);
+        $host = strtolower($url['host'] ?? '');
+        $path = $url['path'] ?? '';
+
+        if (in_array($host, ['localhost', '127.0.0.1', '::1'], true) && str_starts_with($path, '/storage/')) {
+            return '/media/'.ltrim(substr($path, strlen('/storage/')), '/');
+        }
+
+        return $value;
+    }
+
     public static function home(): array
     {
-        return array_merge(self::homeDefaults(), Setting::get(self::settingKey('home'), []));
+        return array_merge(self::homeDefaults(), self::stored('home'));
     }
 
     public static function site(): array
     {
-        return array_merge(self::siteDefaults(), Setting::get(self::settingKey('site'), []));
+        return array_merge(self::siteDefaults(), self::stored('site'));
     }
 
     public static function assistant(): array
     {
-        return array_merge(self::assistantDefaults(), Setting::get(self::settingKey('assistant'), []));
+        return array_merge(self::assistantDefaults(), self::stored('assistant'));
     }
 
     public static function homeSkills(): array
     {
-        return array_merge(self::homeSkillsDefaults(), Setting::get(self::settingKey('home_skills'), []));
+        return array_merge(self::homeSkillsDefaults(), self::stored('home_skills'));
     }
 
     public static function homeTestimonials(): array
     {
-        return array_merge(self::homeTestimonialsDefaults(), Setting::get(self::settingKey('home_testimonials'), []));
+        return array_merge(self::homeTestimonialsDefaults(), self::stored('home_testimonials'));
     }
 
     public static function about(): array
     {
-        return array_merge(self::aboutDefaults(), Setting::get(self::settingKey('about'), []));
+        return array_merge(self::aboutDefaults(), self::stored('about'));
     }
 
     public static function approach(): array
     {
-        return array_merge(self::approachDefaults(), Setting::get(self::settingKey('approach'), []));
+        return array_merge(self::approachDefaults(), self::stored('approach'));
     }
 
     public static function services(): array
     {
-        return array_merge(self::servicesDefaults(), Setting::get(self::settingKey('services'), []));
+        return array_merge(self::servicesDefaults(), self::stored('services'));
     }
 
     public static function lab(): array
     {
-        return array_merge(self::labDefaults(), Setting::get(self::settingKey('lab'), []));
+        return array_merge(self::labDefaults(), self::stored('lab'));
     }
 
     public static function contact(): array
     {
-        return array_merge(self::contactDefaults(), Setting::get(self::settingKey('contact'), []));
+        return array_merge(self::contactDefaults(), self::stored('contact'));
     }
 
     /**
