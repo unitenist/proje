@@ -570,7 +570,48 @@ onBeforeUnmount(() => {
 
 @media (max-width: 640px) {
     .robot-guide {
-        display: none;
+        right: 16px !important;
+        bottom: max(16px, env(safe-area-inset-bottom)) !important;
+        gap: 8px;
+    }
+
+    .robot-avatar {
+        width: 50px;
+        height: 50px;
+        font-size: 23px;
+    }
+
+    .robot-avatar-intro {
+        width: 58px;
+        height: 58px;
+        font-size: 27px;
+    }
+
+    .robot-bubble {
+        max-width: min(250px, calc(100vw - 32px));
+        padding: 9px 12px;
+        font-size: 12px;
+    }
+
+    .robot-chat {
+        width: min(280px, calc(100vw - 32px));
+        max-height: calc(100dvh - 92px);
+        padding: 14px;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+    }
+
+    .robot-chat-btn {
+        min-height: 40px;
+        padding: 9px 14px;
+    }
+
+    .robot-form-input {
+        min-height: 40px;
+    }
+
+    .robot-form-textarea {
+        min-height: 64px;
     }
 }
 </style>
