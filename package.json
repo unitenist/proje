@@ -3,8 +3,8 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "vite build",
-        "build:production": "rm -f public/hot public/fonts-manifest.dev.json && vite build",
+        "build": "RAYON_NUM_THREADS=1 vite build",
+        "build:production": "rm -f public/hot public/fonts-manifest.dev.json && RAYON_NUM_THREADS=1 vite build",
         "dev": "vite"
     },
     "devDependencies": {
